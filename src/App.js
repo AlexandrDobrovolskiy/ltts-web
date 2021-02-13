@@ -3,12 +3,13 @@ import './App.css';
 import { useDropzone } from "react-dropzone";
 
 function App() {
-  const [name, setName] = useState('');
   const onDrop = async (files) => {
     await Promise.all(Array.from(files).map(f => {
       const reader = new FileReader();
       reader.onload = function (event) {
         const config = JSON.parse(event.target.result);
+
+        console.log(f);
 
         fetch('https://test.uebok.com/v1/lotties/add', {
           method: 'POST',
@@ -17,7 +18,7 @@ function App() {
             'Access-Control-Allow-Origin': '*'
           },
           body: JSON.stringify({
-            name,
+            name: f.name.split('.').shift(),
             config
           })
         })
@@ -32,14 +33,9 @@ function App() {
     accept: 'application/json'
   });
 
-  const handleNameChange = ({ target }) => {
-    setName(target.value);
-  }
-
   return (
     <div>
-      <input onChange={handleNameChange} placeholder="Name" />
-      <div {...getRootProps()}>
+      <div {...getRootProps()} style={{ height: '100vh', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <input className="dropzone-input" {...getInputProps()} />
         <div className="text-center">
           {isDragActive ? (
